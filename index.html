@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Budgeting & Retirement Accounts Worksheet | Approach ISC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #14274e;
+    --navy-2: #1f3a6e;
+    --gold: #c9a227;
+    --gold-soft: #f3e7bf;
+    --paper: #ffffff;
+    --bg: #f5f6f9;
+    --ink: #1a1f2b;
+    --muted: #5b6475;
+    --line: #d9dde6;
+    --ok: #1d7a46;
+    --ok-bg: #e5f4ec;
+    --warn: #a3471a;
+    --warn-bg: #fbeee6;
+    --c1: #14274e; --c2: #c9a227; --c3: #4f7cac; --c4: #9a6b4f;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #182033;
+      --bg: #0f1524;
+      --ink: #e8ebf2;
+      --muted: #a3acbe;
+      --line: #2e3a55;
+      --gold-soft: #3a3220;
+      --ok: #6fd39b; --ok-bg: #16352a;
+      --warn: #f0a37a; --warn-bg: #3d2418;
+      --c1: #7fa3e0;
+      color-scheme: dark;
+    }
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.6 "Atkinson Hyperlegible", "Segoe UI", Arial, sans-serif;
+  }
+  h1, h2, h3 { font-family: "Source Serif 4", Georgia, "Times New Roman", serif; line-height: 1.2; margin: 0; }
+
+  /* Header */
+  header.band {
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 5px solid var(--gold);
+  }
+  .band-inner { max-width: 880px; margin: 0 auto; padding: 28px 20px 24px; }
+  .org { color: var(--gold); font-weight: 700; font-size: .95rem; margin-bottom: 6px; }
+  header h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); }
+  header p.sub { margin: 8px 0 18px; color: #cdd6ea; }
+  .name-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .name-row label { font-weight: 700; }
+  .name-row input {
+    flex: 1 1 260px; max-width: 420px;
+    background: transparent; color: #fff;
+    border: 0; border-bottom: 2px solid var(--gold);
+    font: inherit; font-size: 1.1rem; padding: 4px 2px;
+  }
+  .name-row input:focus { outline: none; border-bottom-color: #fff; }
+
+  /* Toolbar */
+  .toolbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+  }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+  .toolbar-inner { max-width: 880px; margin: 0 auto; padding: 10px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .save-status { color: var(--muted); font-size: .9rem; margin-right: auto; }
+  button {
+    font: inherit; font-size: .95rem; font-weight: 700;
+    border-radius: 6px; padding: 8px 14px; cursor: pointer;
+    border: 2px solid var(--navy); background: var(--navy); color: #fff;
+  }
+  button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  main { max-width: 880px; margin: 0 auto; padding: 24px 20px 60px; }
+  section.part {
+    background: var(--paper); border: 1px solid var(--line);
+    border-left: 6px solid var(--navy);
+    border-radius: 8px; padding: 24px; margin-bottom: 28px;
+  }
+  .part-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .part-head h2 { font-size: 1.55rem; color: var(--navy); }
+  @media (prefers-color-scheme: dark) { .part-head h2 { color: #fff; } section.part { border-left-color: var(--gold); } }
+  .time { background: var(--gold-soft); color: var(--ink); font-weight: 700; font-size: .85rem; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .scenario-box { background: var(--bg); border-radius: 6px; padding: 12px 16px; margin-bottom: 18px; }
+
+  /* Budget */
+  .income-line { font-family: "Source Serif 4", Georgia, serif; font-size: 2.6rem; font-weight: 700; color: var(--navy); line-height: 1; }
+  @media (prefers-color-scheme: dark) { .income-line { color: var(--gold); } }
+  .income-label { color: var(--muted); margin-bottom: 14px; }
+  .meter { display: flex; height: 26px; border-radius: 6px; overflow: hidden; background: var(--line); margin: 8px 0 6px; }
+  .meter span { display: block; height: 100%; transition: width .25s ease; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .88rem; color: var(--muted); margin-bottom: 18px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .cat { display: grid; grid-template-columns: 14px 1fr 170px; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+  .cat .swatch { width: 14px; height: 44px; border-radius: 3px; }
+  .cat h3 { font-size: 1.1rem; }
+  .cat p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
+  .money { display: flex; align-items: center; border: 2px solid var(--line); border-radius: 6px; background: var(--paper); }
+  .money span { padding: 0 8px; color: var(--muted); font-weight: 700; }
+  .money input { width: 100%; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 1.1rem; padding: 8px 8px 8px 0; text-align: right; }
+  .money input:focus { outline: none; }
+  .money:focus-within { border-color: var(--gold); }
+  .pct { display: block; text-align: right; font-size: .8rem; color: var(--muted); margin-top: 3px; }
+  .totals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 8px; padding-top: 14px; border-top: 2px solid var(--navy); }
+  .totals div { font-size: .92rem; color: var(--muted); }
+  .totals strong { display: block; font-size: 1.4rem; color: var(--ink); }
+  .check { margin-top: 14px; padding: 10px 14px; border-radius: 6px; font-weight: 700; }
+  .check.ok { background: var(--ok-bg); color: var(--ok); }
+  .check.warn { background: var(--warn-bg); color: var(--warn); }
+  .check.neutral { background: var(--bg); color: var(--muted); }
+
+  label.q { display: block; font-weight: 700; margin: 22px 0 8px; }
+  textarea, select, .field-input {
+    width: 100%; font: inherit; color: var(--ink); background: var(--paper);
+    border: 2px solid var(--line); border-radius: 6px; padding: 10px 12px;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  textarea:focus, select:focus { border-color: var(--gold); }
+
+  /* Case study */
+  ol.steps { padding-left: 1.3rem; margin: 6px 0 0; }
+  ol.steps li { margin-bottom: 6px; }
+  ol.steps ul { margin: 4px 0; }
+  .accounts { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .accounts span { border: 1px solid var(--gold); background: var(--gold-soft); border-radius: 999px; padding: 2px 12px; font-weight: 700; font-size: .9rem; }
+  h3.sub { font-size: 1.2rem; margin: 26px 0 10px; color: var(--navy); }
+  @media (prefers-color-scheme: dark) { h3.sub { color: var(--gold); } }
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+  .group-card {
+    border: 2px solid var(--line); border-radius: 8px; padding: 14px 16px; background: var(--paper);
+    cursor: pointer; text-align: left; color: var(--ink); font-weight: 400;
+  }
+  .group-card.selected { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+  .group-card .gnum { color: var(--muted); font-size: .85rem; font-weight: 700; }
+  .group-card h4 { font-family: "Source Serif 4", Georgia, serif; font-size: 1.25rem; margin: 2px 0 8px; }
+  .group-card dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 0 0 8px; font-size: .93rem; }
+  .group-card dt { font-weight: 700; }
+  .group-card dd { margin: 0; }
+  .group-card p { margin: 0; font-size: .93rem; }
+  .hint { color: var(--muted); font-size: .9rem; margin: 6px 0 0; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding-bottom: 30px; }
+
+  @media (max-width: 640px) {
+    .cat { grid-template-columns: 10px 1fr; }
+    .cat .money-wrap { grid-column: 2; }
+    .cat .swatch { width: 10px; }
+    .form-grid { grid-template-columns: 1fr; }
+    section.part { padding: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .meter span { transition: none; } }
+
+  @media print {
+    :root { --paper:#fff; --bg:#fff; --ink:#000; --muted:#444; --line:#bbb; color-scheme: light; padding: 0; }
+    body { background: #fff; font-size: 12pt; }
+    body::before, .toolbar, .no-print { display: none !important; }
+    header.band { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .meter span, .swatch, .legend i, .accounts span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section.part { break-inside: auto; border-radius: 0; }
+    .group-card { break-inside: avoid; }
+    .groups.has-selection .group-card:not(.selected) { display: none; }
+    textarea { border: 1px solid #999; min-height: 0; height: auto; overflow: visible; }
+    .print-text { white-space: pre-wrap; border: 1px solid #999; border-radius: 4px; padding: 8px 10px; min-height: 60px; }
+  }
+  .print-text { display: none; }
+  @media print { .print-text { display: block; } textarea { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="band-inner">
+    <div class="org">Approach International Student Center</div>
+    <h1>Budgeting &amp; Retirement Accounts</h1>
+    <p class="sub">Build a monthly budget, reflect on your choices, then help your group choose a retirement account.</p>
+    <div class="name-row">
+      <label for="studentName">Name:</label>
+      <input id="studentName" data-save type="text" autocomplete="name" placeholder="Type your full name">
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <span class="save-status" id="saveStatus" aria-live="polite">Your answers save automatically on this device.</span>
+    <button type="button" id="printBtn">Print / Save as PDF</button>
+    <button type="button" class="ghost" id="clearBtn">Clear all answers</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- Budgeting -->
+  <section class="part" aria-labelledby="budgetTitle">
+    <div class="part-head">
+      <h2 id="budgetTitle">Mock Budgeting Exercise</h2>
+      <span class="time">15 minutes</span>
+    </div>
+    <div class="scenario-box">
+      <strong>Scenario:</strong> You earn $2,500/month after taxes. Create a basic budget by deciding how to allocate your income. Use the categories below to guide you.
+    </div>
+
+    <div class="income-line">$2,500</div>
+    <div class="income-label">monthly income after taxes</div>
+
+    <div class="meter" id="meter" role="img" aria-label="Budget allocation bar">
+      <span id="bar1" style="background:var(--c1)"></span>
+      <span id="bar2" style="background:var(--c2)"></span>
+      <span id="bar3" style="background:var(--c3)"></span>
+      <span id="bar4" style="background:var(--c4)"></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--c1)"></i>Fixed</span>
+      <span><i style="background:var(--c2)"></i>Savings</span>
+      <span><i style="background:var(--c3)"></i>Discretionary</span>
+      <span><i style="background:var(--c4)"></i>Debt</span>
+    </div>
+
+    <div class="cat">
+      <div class="swatch" style="background:var(--c1)"></div>
+      <div>
+        <h3>Fixed Expenses</h3>
+        <p>Examples: Rent, utilities, insurance.</p>
+      </div>
+      <div class="money-wrap">
+        <label class="money"><span>$</span><input id="amt1" data-save data-amt type="number" min="0" step="1" inputmode="decimal" aria-label="Fixed expenses amount"></label>
+        <small class="pct" id="pct1">0% of income</small>
+      </div>
+    </div>
+    <div class="cat">
+      <div class="swatch" style="background:var(--c2)"></div>
+      <div>
+        <h3>Savings and Investments</h3>
+        <p>Examples: Emergency fund, stock, bonds, retirement savings.</p>
+      </div>
+      <div class="money-wrap">
+        <label class="money"><span>$</span><input id="amt2" data-save data-amt type="number" min="0" step="1" inputmode="decimal" aria-label="Savings and investments amount"></label>
+        <small class="pct" id="pct2">0% of income</small>
+      </div>
+    </div>
+    <div class="cat">
+      <div class="swatch" style="background:var(--c3)"></div>
+      <div>
+        <h3>Discretionary Spending</h3>
+        <p>Examples: Entertainment, dining out, shopping.</p>
+      </div>
+      <div class="money-wrap">
+        <label class="money"><span>$</span><input id="amt3" data-save data-amt type="number" min="0" step="1" inputmode="decimal" aria-label="Discretionary spending amount"></label>
+        <small class="pct" id="pct3">0% of income</small>
+      </div>
+    </div>
+    <div class="cat">
+      <div class="swatch" style="background:var(--c4)"></div>
+      <div>
+        <h3>Debt Payments (if applicable)</h3>
+        <p>Examples: Credit card payments, student loans.</p>
+      </div>
+      <div class="money-wrap">
+        <label class="money"><span>$</span><input id="amt4" data-save data-amt type="number" min="0" step="1" inputmode="decimal" aria-label="Debt payments amount"></label>
+        <small class="pct" id="pct4">0% of income</small>
+      </div>
+    </div>
+
+    <div class="totals">
+      <div>Total allocated<strong id="totalOut">$0</strong></div>
+      <div>Left to allocate<strong id="leftOut">$2,500</strong></div>
+    </div>
+    <div class="check neutral" id="budgetCheck" aria-live="polite">Enter an amount for each category. Your total should equal $2,500.</div>
+
+    <label class="q" for="budgetReflect">Reflection Question: What changes could you make to this budget if unexpected expenses arise?</label>
+    <textarea id="budgetReflect" data-save placeholder="Write your answer here…"></textarea>
+  </section>
+
+  <!-- Part 3 -->
+  <section class="part" aria-labelledby="reflectTitle">
+    <div class="part-head">
+      <h2 id="reflectTitle">Part 3: Reflection and Sharing</h2>
+      <span class="time">5 minutes</span>
+    </div>
+    <label class="q" for="challenge" style="margin-top:4px">What was the most challenging part of creating your financial roadmap or budget?</label>
+    <textarea id="challenge" data-save placeholder="Write your answer here…"></textarea>
+
+    <label class="q" for="insight">Share one insight or strategy you used when creating your budget:</label>
+    <textarea id="insight" data-save placeholder="Write your answer here…"></textarea>
+  </section>
+
+  <!-- Case Study -->
+  <section class="part" aria-labelledby="caseTitle">
+    <div class="part-head">
+      <h2 id="caseTitle">Case Study: Choosing the Best Retirement Account</h2>
+      <span class="time">Group activity</span>
+    </div>
+
+    <p style="margin-top:0"><strong>Goal:</strong> Work with your group to decide the best retirement account for a hypothetical person based on their details.</p>
+
+    <p style="margin-bottom:4px"><strong>Steps:</strong></p>
+    <ol class="steps">
+      <li>Read your scenario and discuss the person’s age, income, and financial situation.</li>
+      <li>Review retirement account options (401(k), Roth 401(k), IRA, Roth IRA, HSA).</li>
+      <li>Decide which account fits their needs best and why.</li>
+      <li>Prepare a 1-minute explanation to share with the class, including:
+        <ul>
+          <li>The person’s key details.</li>
+          <li>Your recommended account and its benefits.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="accounts" aria-label="Retirement account options">
+      <span>401(k)</span><span>Roth 401(k)</span><span>IRA</span><span>Roth IRA</span><span>HSA</span>
+    </div>
+
+    <h3 class="sub">Group Scenarios</h3>
+    <p class="hint no-print" style="margin:-4px 0 12px">Tap your group’s card to select it.</p>
+    <div class="groups" id="groups">
+      <button type="button" class="group-card" data-group="1">
+        <div class="gnum">Group 1</div>
+        <h4>Maria</h4>
+        <dl><dt>Age</dt><dd>35</dd><dt>Status</dt><dd>Single</dd><dt>Income</dt><dd>Variable (freelance work)</dd></dl>
+        <p>Maria wants flexibility with her contributions since her income fluctuates. She is interested in tax advantages but doesn’t want to be locked into strict withdrawal rules.</p>
+      </button>
+      <button type="button" class="group-card" data-group="2">
+        <div class="gnum">Group 2</div>
+        <h4>Carlos</h4>
+        <dl><dt>Age</dt><dd>45</dd><dt>Status</dt><dd>Married with 2 kids</dd><dt>Income</dt><dd>$120,000/year (steady employment)</dd></dl>
+        <p>Carlos’ employer offers a 401(k) with matching contributions. He wants to maximize his retirement savings while minimizing his current taxable income.</p>
+      </button>
+      <button type="button" class="group-card" data-group="3">
+        <div class="gnum">Group 3</div>
+        <h4>Aisha</h4>
+        <dl><dt>Age</dt><dd>29</dd><dt>Status</dt><dd>Recently married</dd><dt>Income</dt><dd>$60,000/year</dd></dl>
+        <p>Aisha works for a company that doesn’t offer a retirement plan. She wants to start saving for retirement early and is looking for a tax-free growth option for the future.</p>
+      </button>
+      <button type="button" class="group-card" data-group="4">
+        <div class="gnum">Group 4</div>
+        <h4>Daniel</h4>
+        <dl><dt>Age</dt><dd>50</dd><dt>Status</dt><dd>Divorced, no dependents</dd><dt>Income</dt><dd>$90,000/year</dd></dl>
+        <p>Daniel has been saving for retirement but hasn’t contributed consistently. He wants to catch up on his savings and is looking for options with high contribution limits.</p>
+      </button>
+      <button type="button" class="group-card" data-group="5">
+        <div class="gnum">Group 5</div>
+        <h4>Emily</h4>
+        <dl><dt>Age</dt><dd>40</dd><dt>Status</dt><dd>Single</dd><dt>Income</dt><dd>$70,000/year</dd></dl>
+        <p>Emily has high healthcare costs and is enrolled in a high-deductible health plan (HDHP). She wants to save for both retirement and medical expenses in a tax-efficient way.</p>
+      </button>
+    </div>
+
+    <h3 class="sub">Your Group’s Notes</h3>
+    <div class="form-grid">
+      <div>
+        <label class="q" for="groupSelect" style="margin-top:0">Our group</label>
+        <select id="groupSelect" data-save>
+          <option value="">Choose your group…</option>
+          <option value="1">Group 1 – Maria</option>
+          <option value="2">Group 2 – Carlos</option>
+          <option value="3">Group 3 – Aisha</option>
+          <option value="4">Group 4 – Daniel</option>
+          <option value="5">Group 5 – Emily</option>
+        </select>
+      </div>
+      <div>
+        <label class="q" for="accountSelect" style="margin-top:0">Our recommended account</label>
+        <select id="accountSelect" data-save>
+          <option value="">Choose an account…</option>
+          <option>401(k)</option>
+          <option>Roth 401(k)</option>
+          <option>IRA</option>
+          <option>Roth IRA</option>
+          <option>HSA</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="q" for="keyDetails">The person’s key details</label>
+    <textarea id="keyDetails" data-save placeholder="Age, income, situation, and goals…"></textarea>
+
+    <label class="q" for="whyAccount">Why does this account fit their needs best? What are its benefits?</label>
+    <textarea id="whyAccount" data-save placeholder="Explain your group’s reasons…"></textarea>
+
+    <label class="q" for="script">Our 1-minute explanation for the class</label>
+    <textarea id="script" data-save style="min-height:150px" placeholder="Our person is… We recommend… because…"></textarea>
+    <p class="hint" id="wordCount">0 words · about 120–150 words fits in 1 minute.</p>
+  </section>
+</main>
+
+<footer>Approach International Student Center</footer>
+
+<script>
+(function () {
+  var KEY = "approachisc-budget-retirement-v1";
+  var INCOME = 2500;
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-save]"));
+  var statusEl = document.getElementById("saveStatus");
+  var saveTimer;
+
+  function load() {
+    var data = {};
+    try { data = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { data = {}; }
+    fields.forEach(function (f) { if (data[f.id] != null) f.value = data[f.id]; });
+  }
+  function save() {
+    var data = {};
+    fields.forEach(function (f) { data[f.id] = f.value; });
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+      var t = new Date();
+      statusEl.textContent = "Saved at " + t.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch (e) {
+      statusEl.textContent = "Autosave is off in this browser. Print or save as PDF before leaving.";
+    }
+  }
+  function queueSave() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+
+  function fmt(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+
+  function updateBudget() {
+    var total = 0;
+    for (var i = 1; i <= 4; i++) {
+      var v = parseFloat(document.getElementById("amt" + i).value);
+      if (isNaN(v) || v < 0) v = 0;
+      total += v;
+      document.getElementById("pct" + i).textContent = Math.round(v / INCOME * 100) + "% of income";
+    }
+    for (var j = 1; j <= 4; j++) {
+      var a = parseFloat(document.getElementById("amt" + j).value) || 0;
+      var base = Math.max(total, INCOME);
+      document.getElementById("bar" + j).style.width = (a > 0 ? (a / base * 100) : 0) + "%";
+    }
+    var left = INCOME - total;
+    document.getElementById("totalOut").textContent = fmt(total);
+    document.getElementById("leftOut").textContent = left < 0 ? "−" + fmt(-left) : fmt(left);
+    var check = document.getElementById("budgetCheck");
+    if (total === 0) {
+      check.className = "check neutral";
+      check.textContent = "Enter an amount for each category. Your total should equal $2,500.";
+    } else if (Math.abs(left) < 0.5) {
+      check.className = "check ok";
+      check.textContent = "Balanced! Every dollar of your $2,500 has a job.";
+    } else if (left > 0) {
+      check.className = "check warn";
+      check.textContent = "You still have " + fmt(left) + " to allocate. Where should it go?";
+    } else {
+      check.className = "check warn";
+      check.textContent = "You are " + fmt(-left) + " over budget. Reduce one or more categories.";
+    }
+  }
+
+  function updateGroups() {
+    var g = document.getElementById("groupSelect").value;
+    var wrap = document.getElementById("groups");
+    wrap.classList.toggle("has-selection", !!g);
+    Array.prototype.forEach.call(wrap.querySelectorAll(".group-card"), function (c) {
+      var on = c.getAttribute("data-group") === g;
+      c.classList.toggle("selected", on);
+      c.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function updateWords() {
+    var txt = document.getElementById("script").value.trim();
+    var n = txt ? txt.split(/\s+/).length : 0;
+    document.getElementById("wordCount").textContent = n + (n === 1 ? " word" : " words") + " · about 120–150 words fits in 1 minute.";
+  }
+
+  function syncPrintText() {
+    document.querySelectorAll(".print-text").forEach(function (el) { el.remove(); });
+    document.querySelectorAll("textarea").forEach(function (ta) {
+      var div = document.createElement("div");
+      div.className = "print-text";
+      div.textContent = ta.value || " ";
+      ta.parentNode.insertBefore(div, ta.nextSibling);
+    });
+  }
+
+  document.getElementById("groups").addEventListener("click", function (e) {
+    var card = e.target.closest(".group-card");
+    if (!card) return;
+    var sel = document.getElementById("groupSelect");
+    sel.value = sel.value === card.getAttribute("data-group") ? "" : card.getAttribute("data-group");
+    updateGroups(); queueSave();
+  });
+
+  fields.forEach(function (f) {
+    f.addEventListener("input", function () {
+      if (f.hasAttribute("data-amt")) updateBudget();
+      if (f.id === "groupSelect") updateGroups();
+      if (f.id === "script") updateWords();
+      queueSave();
+    });
+    f.addEventListener("change", function () { if (f.id === "groupSelect") updateGroups(); queueSave(); });
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function () { syncPrintText(); window.print(); });
+  window.addEventListener("beforeprint", syncPrintText);
+
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    if (!confirm("Clear all your answers on this page? This cannot be undone.")) return;
+    fields.forEach(function (f) { f.value = ""; });
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    updateBudget(); updateGroups(); updateWords();
+    statusEl.textContent = "All answers cleared.";
+  });
+
+  load(); updateBudget(); updateGroups(); updateWords();
+})();
+</script>
+</body>
+</html>
